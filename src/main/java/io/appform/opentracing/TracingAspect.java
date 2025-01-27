@@ -1,7 +1,5 @@
 package io.appform.opentracing;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -45,6 +43,7 @@ public class TracingAspect {
 
     @Around("tracingAnnotationCalled() && anyFunctionCalled()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("opentracing LoggingAspect called..!");
         final Signature callSignature = joinPoint.getSignature();
         final TracingOptions options = TracingManager.getTracingOptions();
         final MethodSignature methodSignature = (MethodSignature) callSignature;
@@ -64,6 +63,8 @@ public class TracingAspect {
             scope = TracingHandler.startScope(tracer, span);
             final Object response = joinPoint.proceed();
             TracingHandler.addSuccessTagToSpan(span);
+            log.info("Tracer  is {}",tracer);
+            log.info("Tracer span is {}",span);
             return response;
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
@@ -83,16 +84,12 @@ public class TracingAspect {
 
     private String getClassName(final TracingAnnotation tracingAnnotation,
                                 final Signature callSignature) {
-        return Strings.isNullOrEmpty(tracingAnnotation.className())
-                ? callSignature.getDeclaringType().getSimpleName()
-                : tracingAnnotation.className();
+        return tracingAnnotation.className();
     }
 
     private String getMethodName(final TracingAnnotation tracingAnnotation,
                                  final Signature callSignature) {
-        return Strings.isNullOrEmpty(tracingAnnotation.method())
-                ? callSignature.getName()
-                : tracingAnnotation.method();
+        return tracingAnnotation.method();
     }
 
     private String getParameterString(final TracingOptions tracingOptions,
@@ -122,12 +119,12 @@ public class TracingAspect {
                     return matches ? paramValueStr : "";
                 })
                 .filter(Objects::nonNull)
-                .filter(value -> !Strings.isNullOrEmpty(value))
+                .filter(value -> value!=null && !value.isEmpty())
                 .collect(Collectors.toList());
 
-        if (!paramValues.isEmpty()) {
-            return Joiner.on(TracingConstants.PARAMETER_DELIMITER).join(paramValues);
-        }
+//        if (!paramValues.isEmpty()) {
+//            return Joiner.on(TracingConstants.PARAMETER_DELIMITER).join(paramValues);
+//        }
 
         return null;
     }
