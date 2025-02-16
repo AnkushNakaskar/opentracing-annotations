@@ -1,5 +1,7 @@
 package io.appform.opentracing;
 
+import brave.Tracing;
+import brave.opentracing.BraveTracer;
 import com.google.common.base.Strings;
 import io.opentracing.Scope;
 import io.opentracing.Span;
@@ -28,13 +30,17 @@ public class TracingHandler {
                           final FunctionData functionData,
                           final String parameterString) {
         try {
-
+            GlobalTracer.registerIfAbsent(()->{
+                return BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
+            });
             if (tracer == null) {
+                log.info("Tracer is null");
                 return null;
             }
             Span parentSpan = tracer.activeSpan();
             if (parentSpan == null) {
-                return null;
+                log.info("Parent span is null");
+                parentSpan = GlobalTracer.get().buildSpan("rootSpan").start();
             }
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpan)
