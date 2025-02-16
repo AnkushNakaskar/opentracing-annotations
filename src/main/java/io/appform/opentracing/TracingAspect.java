@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class TracingAspect {
 
     @Around("tracingAnnotationCalled() && anyFunctionCalled()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("opentracing LoggingAspect called..!");
+        log.info("opentracing LoggingAspect called..!");
         final Signature callSignature = joinPoint.getSignature();
         final TracingOptions options = TracingManager.getTracingOptions();
         final MethodSignature methodSignature = (MethodSignature) callSignature;
@@ -65,8 +66,12 @@ public class TracingAspect {
             scope = TracingHandler.startScope(tracer, span);
             final Object response = joinPoint.proceed();
             TracingHandler.addSuccessTagToSpan(span);
-            log.info("Tracer  is {}",tracer);
-            log.info("Tracer span is {}",span);
+
+            MDC.put("trace_id",span.context().toTraceId());
+            MDC.put("span_id",span.context().toSpanId());
+
+            log.info("Tracer  is {} with value {}",tracer,MDC.get("trace_id"));
+            log.info("Tracer span is {} with value {}",span,MDC.get("span_id"));
             return response;
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
@@ -74,6 +79,7 @@ public class TracingAspect {
         } finally {
             TracingHandler.closeSpanAndScope(span, scope);
         }
+
     }
 
     private FunctionData getFunctionData(final Signature callSignature,

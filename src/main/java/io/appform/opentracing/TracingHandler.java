@@ -28,6 +28,7 @@ public class TracingHandler {
                           final FunctionData functionData,
                           final String parameterString) {
         try {
+
             if (tracer == null) {
                 return null;
             }
