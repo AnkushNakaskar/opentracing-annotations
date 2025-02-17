@@ -5,11 +5,10 @@ import com.google.common.base.Strings;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,8 @@ public class TracingAspect {
 
     private final Map<String, FunctionData> paramCache = new ConcurrentHashMap<>();
 
+    private  Map<String, String> contextMap;
+
 
     @Pointcut("@annotation(io.appform.opentracing.TracingAnnotation)")
     public void tracingAnnotationCalled() {
@@ -44,9 +45,10 @@ public class TracingAspect {
         //Empty as required
     }
 
-    @Around("tracingAnnotationCalled() && anyFunctionCalled()")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("opentracing LoggingAspect called..!");
+    @Before("tracingAnnotationCalled() && anyFunctionCalled()")
+    public void before(JoinPoint joinPoint) throws Throwable {
+        log.info("before opentracing LoggingAspect called..!");
+        TracingHandler.initialisedParentSpan(Objects.requireNonNull(TracingHandler.getTracer()));
         final Signature callSignature = joinPoint.getSignature();
         final TracingOptions options = TracingManager.getTracingOptions();
         final MethodSignature methodSignature = (MethodSignature) callSignature;
@@ -57,29 +59,30 @@ public class TracingAspect {
 
         final String parameterString = getParameterString(options, methodSignature, joinPoint,
                 functionData.getClassName(), functionData.getMethodName());
-
         Span span = null;
         Scope scope = null;
         try {
             final Tracer tracer = TracingHandler.getTracer();
             span = TracingHandler.startSpan(tracer, functionData, parameterString);
             scope = TracingHandler.startScope(tracer, span);
-            final Object response = joinPoint.proceed();
             TracingHandler.addSuccessTagToSpan(span);
-
             MDC.put("trace_id",span.context().toTraceId());
             MDC.put("span_id",span.context().toSpanId());
-
             log.info("Tracer  is {} with value {}",tracer,MDC.get("trace_id"));
             log.info("Tracer span is {} with value {}",span,MDC.get("span_id"));
-            return response;
+            TracingHandler.closeSpanAndScope(span, scope);
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
             throw t;
-        } finally {
-            TracingHandler.closeSpanAndScope(span, scope);
+        }finally {
+            this.contextMap = MDC.getCopyOfContextMap();
         }
+    }
 
+    @After("tracingAnnotationCalled() && anyFunctionCalled()")
+    public void after(JoinPoint joinPoint) throws Throwable {
+        MDC.setContextMap(this.contextMap);
+        log.info("Into After point cut with cntextmap {}",this.contextMap);
     }
 
     private FunctionData getFunctionData(final Signature callSignature,
@@ -106,7 +109,7 @@ public class TracingAspect {
 
     private String getParameterString(final TracingOptions tracingOptions,
                                       final MethodSignature methodSignature,
-                                      final ProceedingJoinPoint joinPoint,
+                                      final JoinPoint joinPoint,
                                       final String className,
                                       final String methodName) {
         if (tracingOptions == null || !tracingOptions.isParameterCaptureEnabled()) {

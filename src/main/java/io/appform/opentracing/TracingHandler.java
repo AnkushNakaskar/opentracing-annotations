@@ -57,6 +57,18 @@ public class TracingHandler {
         }
     }
 
+    static Span initialisedParentSpan(final Tracer tracer){
+        GlobalTracer.registerIfAbsent(()->{
+            return BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
+        });
+
+        Span parentSpan = tracer.activeSpan();
+        if (parentSpan == null) {
+            parentSpan = GlobalTracer.get().buildSpan("rootSpan").start();
+        }
+        return parentSpan;
+    }
+
     static Scope startScope(final Tracer tracer,
                             final Span span) {
         try {

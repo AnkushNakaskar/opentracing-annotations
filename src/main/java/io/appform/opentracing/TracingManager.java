@@ -1,5 +1,7 @@
 package io.appform.opentracing;
 
+import org.slf4j.MDC;
+
 /**
  * Tracing manager that needs to be initialized at the start
  */
@@ -17,4 +19,5 @@ public class TracingManager {
     public static TracingOptions getTracingOptions() {
         return tracingOptions;
     }
+
 }

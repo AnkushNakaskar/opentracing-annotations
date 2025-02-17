@@ -1,5 +1,7 @@
 package io.appform.opentracing;
 
+import org.slf4j.MDC;
+
 /**
  * Additional options required for tracing
  */
@@ -27,6 +29,10 @@ public class TracingOptions {
 
     public TracingOptions() {
         /* Nothing to do here */
+    }
+
+    public void setMDCValues(){
+        MDC.put("newValue","newValueInMDC");
     }
 
     public static class TracingOptionsBuilder {
