@@ -80,6 +80,7 @@ public class TracingAspect {
     @After("tracingAnnotationCalled() && anyFunctionCalled()")
     public void after(JoinPoint joinPoint) throws Throwable {
         MDC.setContextMap(this.contextMap);
+        log.info("after opentracing LoggingAspect called..!");
     }
 
     private FunctionData getFunctionData(final Signature callSignature,
