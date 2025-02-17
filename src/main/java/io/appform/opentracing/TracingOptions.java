@@ -30,11 +30,6 @@ public class TracingOptions {
     public TracingOptions() {
         /* Nothing to do here */
     }
-
-    public void setMDCValues(){
-        MDC.put("newValue","newValueInMDC");
-    }
-
     public static class TracingOptionsBuilder {
         private boolean parameterCaptureEnabled;
         private boolean disableCacheOptimisation;

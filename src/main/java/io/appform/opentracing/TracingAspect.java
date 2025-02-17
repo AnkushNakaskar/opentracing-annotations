@@ -68,8 +68,6 @@ public class TracingAspect {
             TracingHandler.addSuccessTagToSpan(span);
             MDC.put("trace_id",span.context().toTraceId());
             MDC.put("span_id",span.context().toSpanId());
-            log.info("Tracer  is {} with value {}",tracer,MDC.get("trace_id"));
-            log.info("Tracer span is {} with value {}",span,MDC.get("span_id"));
             TracingHandler.closeSpanAndScope(span, scope);
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
@@ -82,7 +80,6 @@ public class TracingAspect {
     @After("tracingAnnotationCalled() && anyFunctionCalled()")
     public void after(JoinPoint joinPoint) throws Throwable {
         MDC.setContextMap(this.contextMap);
-        log.info("Into After point cut with cntextmap {}",this.contextMap);
     }
 
     private FunctionData getFunctionData(final Signature callSignature,

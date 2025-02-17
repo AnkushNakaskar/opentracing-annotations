@@ -34,12 +34,10 @@ public class TracingHandler {
                 return BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
             });
             if (tracer == null) {
-                log.info("Tracer is null");
                 return null;
             }
             Span parentSpan = tracer.activeSpan();
             if (parentSpan == null) {
-                log.info("Parent span is null");
                 parentSpan = GlobalTracer.get().buildSpan("rootSpan").start();
             }
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
