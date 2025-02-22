@@ -48,7 +48,7 @@ public class TracingAspect {
     @Before("tracingAnnotationCalled() && anyFunctionCalled()")
     public void before(JoinPoint joinPoint) throws Throwable {
         log.info("before opentracing LoggingAspect called..!");
-        TracingHandler.initialisedParentSpan(Objects.requireNonNull(TracingHandler.getTracer()));
+//        TracingHandler.initialisedParentSpan(Objects.requireNonNull(TracingHandler.getTracer()));
         final Signature callSignature = joinPoint.getSignature();
         final TracingOptions options = TracingManager.getTracingOptions();
         final MethodSignature methodSignature = (MethodSignature) callSignature;
@@ -66,8 +66,7 @@ public class TracingAspect {
             span = TracingHandler.startSpan(tracer, functionData, parameterString);
             scope = TracingHandler.startScope(tracer, span);
             TracingHandler.addSuccessTagToSpan(span);
-            MDC.put("trace_id",span.context().toTraceId());
-            MDC.put("span_id",span.context().toSpanId());
+            TracerUtil.populateMDCTracing(span.context().toTraceId(),span.context().toSpanId());
             TracingHandler.closeSpanAndScope(span, scope);
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
