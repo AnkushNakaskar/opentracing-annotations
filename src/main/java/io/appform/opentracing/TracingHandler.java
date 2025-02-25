@@ -25,18 +25,17 @@ public class TracingHandler {
 
     static Tracer getTracer() {
         try {
-            return TracerUtil.getTracer(null);
+            return TracerUtil.getTracer();
         } catch (Exception e) {
             log.error("Error while getting tracer", e);
             return null;
         }
     }
 
-    static Span startSpan(Tracer tracer,
-                          final FunctionData functionData,
+    static Span startSpan(final FunctionData functionData,
                           final String parameterString) {
         try {
-            tracer = TracerUtil.getTracer(tracer);
+            Tracer tracer = TracerUtil.getTracer();
             SpanContext parentSpanContext = buildSpanFromHeaders((BraveTracer) tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)

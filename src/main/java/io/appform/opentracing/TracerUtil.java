@@ -18,8 +18,10 @@ public class TracerUtil {
     public static final String TRACE_ID = "trace_id";
     public static final String SPAN_ID = "span_id";
 
+    private static  Tracer tracer=null;
+
     @NotNull
-    public static Tracer getTracer(Tracer tracer) {
+    public static Tracer getTracer() {
         if(tracer ==null || !(tracer instanceof BraveTracer)){
             tracer = BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
         }
