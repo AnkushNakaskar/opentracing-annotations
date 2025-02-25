@@ -34,7 +34,7 @@ public class ActorTracingListener {
 
     @After("tracingHandleActorMethodCalled() && anyFunctionCalled()")
     public void after(JoinPoint joinPoint) throws Throwable {
-        log.error("after tracingHandleActorMethodCalled LoggingAspect called..!");
+        log.debug("after tracingHandleActorMethodCalled LoggingAspect called..!");
         TracerUtil.destroyTracingForRequest();
     }
 
