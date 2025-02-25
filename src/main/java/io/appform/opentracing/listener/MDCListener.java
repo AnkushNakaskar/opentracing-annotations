@@ -1,4 +1,6 @@
-package io.appform.opentracing;
+package io.appform.opentracing.listener;
+
+import io.appform.opentracing.TracerUtil;
 
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
