@@ -32,7 +32,6 @@ public class TracingAspect {
 
     private final Map<String, FunctionData> paramCache = new ConcurrentHashMap<>();
 
-    private  Map<String, String> contextMap;
 
 
     @Pointcut("@annotation(io.appform.opentracing.TracingAnnotation)")
@@ -47,8 +46,7 @@ public class TracingAspect {
 
     @Before("tracingAnnotationCalled() && anyFunctionCalled()")
     public void before(JoinPoint joinPoint) throws Throwable {
-        log.info("before opentracing LoggingAspect called..!");
-//        TracingHandler.initialisedParentSpan(Objects.requireNonNull(TracingHandler.getTracer()));
+        log.debug("before opentracing LoggingAspect called..!");
         final Signature callSignature = joinPoint.getSignature();
         final TracingOptions options = TracingManager.getTracingOptions();
         final MethodSignature methodSignature = (MethodSignature) callSignature;
@@ -71,15 +69,12 @@ public class TracingAspect {
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
             throw t;
-        }finally {
-            this.contextMap = MDC.getCopyOfContextMap();
         }
     }
 
     @After("tracingAnnotationCalled() && anyFunctionCalled()")
     public void after(JoinPoint joinPoint) throws Throwable {
-        MDC.setContextMap(this.contextMap);
-        log.info("after opentracing LoggingAspect called..!");
+        log.debug("after opentracing LoggingAspect called..!");
     }
 
     private FunctionData getFunctionData(final Signature callSignature,

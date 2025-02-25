@@ -35,4 +35,9 @@ public class TracerUtil {
     public static String getMDCSpanId(){
         return MDC.get(SPAN_ID);
     }
+
+    public static void destroyTracingForRequest() {
+        MDC.remove(TRACE_ID);
+        MDC.remove(SPAN_ID);
+    }
 }
