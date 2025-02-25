@@ -2,9 +2,12 @@ package io.appform.opentracing;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
+import io.opentracing.Span;
 import io.opentracing.Tracer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.MDC;
+
+import java.util.Objects;
 
 /**
  * @author ankush.nakaskar
@@ -23,7 +26,7 @@ public class TracerUtil {
         return tracer;
     }
 
-    public static void populateMDCTracing(String traceId,String spanId){
+    private static void populateMDCTracing(String traceId,String spanId){
         MDC.put(TRACE_ID,traceId);
         MDC.put(SPAN_ID,spanId);
     }
@@ -39,5 +42,11 @@ public class TracerUtil {
     public static void destroyTracingForRequest() {
         MDC.remove(TRACE_ID);
         MDC.remove(SPAN_ID);
+    }
+
+    public static void populateMDCTracing(Span span) {
+        if(Objects.nonNull(span)) {
+            populateMDCTracing(span.context().toTraceId(),span.context().toSpanId());
+        }
     }
 }
