@@ -3,6 +3,7 @@ package io.appform.opentracing;
 import brave.opentracing.BraveSpanContext;
 import brave.opentracing.BraveTracer;
 import com.google.common.base.Strings;
+import io.appform.opentracing.util.TracerUtil;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;

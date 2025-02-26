@@ -2,17 +2,16 @@ package io.appform.opentracing;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import io.appform.opentracing.util.TracerUtil;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Map;

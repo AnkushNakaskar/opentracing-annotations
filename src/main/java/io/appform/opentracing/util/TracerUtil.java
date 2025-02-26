@@ -1,7 +1,8 @@
-package io.appform.opentracing;
+package io.appform.opentracing.util;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
+import com.rabbitmq.client.AMQP;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,29 @@ public class TracerUtil {
     public static void populateMDCTracing(Span span) {
         if(Objects.nonNull(span)) {
             populateMDCTracing(span.context().toTraceId(),span.context().toSpanId());
+        }
+    }
+    public static boolean isTraceIDPresentInQueueMessage(AMQP.BasicProperties properties){
+
+        if(properties.getHeaders()!=null && !properties.getHeaders().isEmpty()){
+            if(properties.getHeaders().containsKey(TracerUtil.TRACE_ID) &&
+                    properties.getHeaders().containsKey(TracerUtil.SPAN_ID)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void populateTraceIDInQueueMessage(AMQP.BasicProperties properties){
+        if(properties.getHeaders()!=null) {
+            properties.getHeaders().put(TracerUtil.TRACE_ID, TracerUtil.getMDCTraceId());
+            properties.getHeaders().put(TracerUtil.SPAN_ID, TracerUtil.getMDCSpanId());
+        }
+    }
+
+    public void populateTracingFromQueue(AMQP.BasicProperties properties){
+        if(isTraceIDPresentInQueueMessage(properties)){
+            populateMDCTracing(String.valueOf(properties.getHeaders().get(TracerUtil.TRACE_ID)),
+                    String.valueOf(properties.getHeaders().get(TracerUtil.SPAN_ID)));
         }
     }
 }

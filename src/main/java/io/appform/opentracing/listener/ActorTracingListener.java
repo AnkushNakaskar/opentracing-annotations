@@ -1,6 +1,7 @@
 package io.appform.opentracing.listener;
 
-import io.appform.opentracing.TracerUtil;
+import io.appform.opentracing.util.JoinPointUtils;
+import io.appform.opentracing.util.TracerUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -29,7 +30,10 @@ public class ActorTracingListener {
 
     @Before("tracingHandleActorMethodCalled() && anyFunctionCalled()")
     public void before(JoinPoint joinPoint) throws Throwable {
-        log.debug("before tracingHandleActorMethodCalled LoggingAspect called..!");
+        log.info("before tracingHandleActorMethodCalled LoggingAspect called..!");
+        Object[] args = JoinPointUtils.getMethodParameters(joinPoint);
+        log.info("args tracingHandleActorMethodCalled LoggingAspect called..! {}",args);
+
     }
 
     @After("tracingHandleActorMethodCalled() && anyFunctionCalled()")
