@@ -33,11 +33,11 @@ public class TracingHandler {
         }
     }
 
-    static Span startSpan(final FunctionData functionData,
+    public static Span startSpan(final FunctionData functionData,
                           final String parameterString) {
         try {
             Tracer tracer = TracerUtil.getTracer();
-            SpanContext parentSpanContext = buildSpanFromHeaders((BraveTracer) tracer);
+            SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders((BraveTracer) tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)
                     .withTag(TracingConstants.CLASS_NAME_TAG, functionData.getClassName())
@@ -106,17 +106,6 @@ public class TracingHandler {
     private static void addStatusTag(final String status,
                                      final Span span) {
         span.setTag(TracingConstants.METHOD_STATUS_TAG, status);
-    }
-
-    private static BraveSpanContext buildSpanFromHeaders(BraveTracer tracer) {
-        if(StringUtils.isNotBlank(TracerUtil.getMDCTraceId()) && StringUtils.isNotBlank(TracerUtil.getMDCSpanId())){
-            Map<String, String> headers = new HashMap<>();
-            headers.put("x-b3-traceid", TracerUtil.getMDCTraceId());
-            headers.put("x-b3-spanid", TracerUtil.getMDCSpanId());
-            headers.put("x-b3-parentspanid", TracerUtil.getMDCSpanId());
-            return tracer.extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headers));
-        }
-        return null;
     }
 
 }

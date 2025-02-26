@@ -1,13 +1,19 @@
 package io.appform.opentracing.util;
 
 import brave.Tracing;
+import brave.opentracing.BraveSpanContext;
 import brave.opentracing.BraveTracer;
 import com.rabbitmq.client.AMQP;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.propagation.Format;
+import io.opentracing.propagation.TextMapAdapter;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.MDC;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -62,17 +68,26 @@ public class TracerUtil {
         }
         return false;
     }
-    public static void populateTraceIDInQueueMessage(AMQP.BasicProperties properties){
-        if(properties.getHeaders()!=null) {
-            properties.getHeaders().put(TracerUtil.TRACE_ID, TracerUtil.getMDCTraceId());
-            properties.getHeaders().put(TracerUtil.SPAN_ID, TracerUtil.getMDCSpanId());
-        }
-    }
 
-    public void populateTracingFromQueue(AMQP.BasicProperties properties){
+    public static void populateTracingFromQueue(AMQP.BasicProperties properties){
         if(isTraceIDPresentInQueueMessage(properties)){
             populateMDCTracing(String.valueOf(properties.getHeaders().get(TracerUtil.TRACE_ID)),
                     String.valueOf(properties.getHeaders().get(TracerUtil.SPAN_ID)));
         }
+    }
+
+    public static BraveSpanContext buildSpanFromHeaders(BraveTracer tracer) {
+        if(isTracePresent()){
+            Map<String, String> headers = new HashMap<>();
+            headers.put("x-b3-traceid", TracerUtil.getMDCTraceId());
+            headers.put("x-b3-spanid", TracerUtil.getMDCSpanId());
+            headers.put("x-b3-parentspanid", TracerUtil.getMDCSpanId());
+            return tracer.extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headers));
+        }
+        return null;
+    }
+
+    public static boolean isTracePresent() {
+        return StringUtils.isNotBlank(TracerUtil.getMDCTraceId()) && StringUtils.isNotBlank(TracerUtil.getMDCSpanId());
     }
 }
