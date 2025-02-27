@@ -1,6 +1,5 @@
 package io.appform.opentracing;
 
-import brave.opentracing.BraveSpanContext;
 import brave.opentracing.BraveTracer;
 import com.google.common.base.Strings;
 import io.appform.opentracing.util.TracerUtil;
@@ -8,14 +7,9 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import io.opentracing.propagation.Format;
-import io.opentracing.propagation.TextMapAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utility class that handles all span and scope related operations

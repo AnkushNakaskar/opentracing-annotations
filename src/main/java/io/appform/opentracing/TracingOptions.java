@@ -1,7 +1,5 @@
 package io.appform.opentracing;
 
-import org.slf4j.MDC;
-
 /**
  * Additional options required for tracing
  */

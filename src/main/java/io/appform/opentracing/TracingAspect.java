@@ -32,7 +32,6 @@ public class TracingAspect {
     private final Map<String, FunctionData> paramCache = new ConcurrentHashMap<>();
 
 
-
     @Pointcut("@annotation(io.appform.opentracing.TracingAnnotation)")
     public void tracingAnnotationCalled() {
         //Empty as required
