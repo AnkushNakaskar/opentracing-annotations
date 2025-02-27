@@ -72,18 +72,11 @@
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
         <maven.shade.version>3.3.0</maven.shade.version>
 
-        <dropwizard.rabbitmq.version>2.0.23-4</dropwizard.rabbitmq.version>
-        <rabbitmq.client.version>5.17.0</rabbitmq.client.version>
 
 
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-            <version>${rabbitmq.client.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.opentracing</groupId>
             <artifactId>opentracing-api</artifactId>
