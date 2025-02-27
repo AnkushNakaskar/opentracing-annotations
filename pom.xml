@@ -124,12 +124,6 @@
             <artifactId>tracing-bundle-core</artifactId>
             <version>1.0.9</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.phonepe.platform</groupId>
-            <artifactId>tracing-bundle-models</artifactId>
-            <version>1.0.9</version>
-        </dependency>
     </dependencies>
 
     <build>

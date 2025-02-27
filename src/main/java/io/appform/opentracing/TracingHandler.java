@@ -40,8 +40,8 @@ public class TracingHandler {
             SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders((BraveTracer) tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)
-                    .withTag(TracingConstants.CLASS_NAME_TAG, functionData.getClassName())
-                    .withTag(TracingConstants.METHOD_NAME_TAG, functionData.getMethodName())
+                    .withTag(TracingConstants.CLASS_NAME_TAG, StringUtils.stripToEmpty(functionData.getClassName()))
+                    .withTag(TracingConstants.METHOD_NAME_TAG, StringUtils.stripToEmpty(functionData.getMethodName()))
                     .start();
             if (!Strings.isNullOrEmpty(parameterString)) {
                 span.setTag(TracingConstants.PARAMETER_STRING_TAG, parameterString);

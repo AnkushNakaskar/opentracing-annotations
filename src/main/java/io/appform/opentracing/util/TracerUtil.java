@@ -34,6 +34,14 @@ public class TracerUtil {
         return tracer;
     }
 
+    @NotNull
+    public static Tracer getTracer(Tracing tracing) {
+        if(tracer ==null || !(tracer instanceof BraveTracer)){
+            tracer = BraveTracer.newBuilder(tracing).build();
+        }
+        return tracer;
+    }
+
     private static void populateMDCTracing(String traceId,String spanId){
         MDC.put(TRACE_ID,traceId);
         MDC.put(SPAN_ID,spanId);
