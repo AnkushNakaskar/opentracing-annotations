@@ -71,10 +71,6 @@ public class TracingAspect {
         }
     }
 
-    @After("tracingAnnotationCalled() && anyFunctionCalled()")
-    public void after(JoinPoint joinPoint) throws Throwable {
-        log.debug("after opentracing LoggingAspect called..!");
-    }
 
     private FunctionData getFunctionData(final Signature callSignature,
                                          final MethodSignature methodSignature) {
