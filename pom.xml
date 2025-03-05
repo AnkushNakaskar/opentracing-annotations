@@ -138,11 +138,6 @@
             <artifactId>brave-context-slf4j</artifactId>
             <version>${brave.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-core</artifactId>
-            <version>${dropwizard.version}</version>
-        </dependency>
 
     </dependencies>
 
