@@ -71,8 +71,11 @@
         <slf4j.version>1.7.30</slf4j.version>
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
         <maven.shade.version>3.3.0</maven.shade.version>
-
-
+        <dropwizard.version>2.0.23</dropwizard.version>
+        <opentracing.brave.version>0.37.5</opentracing.brave.version>
+        <brave.version>5.13.1</brave.version>
+        <zipkin.reporter.version>2.16.2</zipkin.reporter.version>
+        <zipkin.sender.http.version>2.23.3-17</zipkin.sender.http.version>
 
     </properties>
 
@@ -120,10 +123,27 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.phonepe.platform</groupId>
-            <artifactId>tracing-bundle-core</artifactId>
-            <version>1.0.9</version>
+            <groupId>io.opentracing.brave</groupId>
+            <artifactId>brave-opentracing</artifactId>
+            <version>${opentracing.brave.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.opentracing</groupId>
+                    <artifactId>opentracing-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-context-slf4j</artifactId>
+            <version>${brave.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

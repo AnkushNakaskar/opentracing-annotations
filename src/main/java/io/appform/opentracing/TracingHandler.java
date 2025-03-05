@@ -7,7 +7,6 @@ import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +33,8 @@ public class TracingHandler {
             SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders((BraveTracer) tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)
-                    .withTag(TracingConstants.CLASS_NAME_TAG, StringUtils.stripToEmpty(functionData.getClassName()))
-                    .withTag(TracingConstants.METHOD_NAME_TAG, StringUtils.stripToEmpty(functionData.getMethodName()))
+                    .withTag(TracingConstants.CLASS_NAME_TAG, TracerUtil.stripToEmpty(functionData.getClassName()))
+                    .withTag(TracingConstants.METHOD_NAME_TAG, TracerUtil.stripToEmpty(functionData.getMethodName()))
                     .start();
             if (!Strings.isNullOrEmpty(parameterString)) {
                 span.setTag(TracingConstants.PARAMETER_STRING_TAG, parameterString);

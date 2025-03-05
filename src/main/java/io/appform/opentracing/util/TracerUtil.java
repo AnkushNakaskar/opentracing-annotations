@@ -7,8 +7,6 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMapAdapter;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.MDC;
 
 import java.util.HashMap;
@@ -26,7 +24,6 @@ public class TracerUtil {
 
     private static  Tracer tracer=null;
 
-    @NotNull
     public static Tracer getTracer() {
         if(tracer ==null || !(tracer instanceof BraveTracer)){
             tracer = BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
@@ -34,7 +31,6 @@ public class TracerUtil {
         return tracer;
     }
 
-    @NotNull
     public static Tracer getTracer(Tracing tracing) {
         if(tracer ==null || !(tracer instanceof BraveTracer)){
             tracer = BraveTracer.newBuilder(tracing).build();
@@ -95,6 +91,13 @@ public class TracerUtil {
     }
 
     public static boolean isTracePresent() {
-        return StringUtils.isNotBlank(TracerUtil.getMDCTraceId()) && StringUtils.isNotBlank(TracerUtil.getMDCSpanId());
+        if(TracerUtil.getMDCTraceId()!=null && !TracerUtil.getMDCTraceId().isEmpty() &&  TracerUtil.getMDCSpanId()!=null && !TracerUtil.getMDCSpanId().isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public static String stripToEmpty(String input){
+        return input == null ? "" : input.trim();
     }
 }
