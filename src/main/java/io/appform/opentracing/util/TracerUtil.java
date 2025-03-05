@@ -4,6 +4,7 @@ import brave.Tracing;
 import brave.opentracing.BraveSpanContext;
 import brave.opentracing.BraveTracer;
 import io.opentracing.Span;
+import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMapAdapter;
@@ -79,7 +80,7 @@ public class TracerUtil {
         }
     }
 
-    public static BraveSpanContext buildSpanFromHeaders(BraveTracer tracer) {
+    public static SpanContext buildSpanFromHeaders(Tracer tracer) {
         if(isTracePresent()){
             Map<String, String> headers = new HashMap<>();
             headers.put("x-b3-traceid", TracerUtil.getMDCTraceId());

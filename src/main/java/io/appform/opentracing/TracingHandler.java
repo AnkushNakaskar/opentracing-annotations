@@ -30,7 +30,7 @@ public class TracingHandler {
                           final String parameterString) {
         try {
             Tracer tracer = TracerUtil.getTracer();
-            SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders((BraveTracer) tracer);
+            SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders(tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)
                     .withTag(TracingConstants.CLASS_NAME_TAG, TracerUtil.stripToEmpty(functionData.getClassName()))
