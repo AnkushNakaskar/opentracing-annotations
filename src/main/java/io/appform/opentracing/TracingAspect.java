@@ -63,10 +63,11 @@ public class TracingAspect {
             scope = TracingHandler.startScope(tracer, span);
             TracingHandler.addSuccessTagToSpan(span);
             TracerUtil.populateMDCTracing(span);
-            TracingHandler.closeSpanAndScope(span, scope);
         } catch (Throwable t) {
             TracingHandler.addErrorTagToSpan(span);
             throw t;
+        }finally {
+            TracingHandler.closeSpanAndScope(span, scope);
         }
     }
 
