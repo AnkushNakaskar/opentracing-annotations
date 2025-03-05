@@ -60,9 +60,8 @@ public class TracingAspect {
         Span span = null;
         Scope scope = null;
         try {
-            final Tracer tracer = TracingHandler.getTracer();
             span = TracingHandler.startSpan(functionData, parameterString);
-            scope = TracingHandler.startScope(tracer, span);
+            scope = TracingHandler.startScope(span);
             TracingHandler.addSuccessTagToSpan(span);
             TracerUtil.populateMDCTracing(span);
         } catch (Throwable t) {

@@ -76,12 +76,12 @@ class TracingHandlerTest {
 
     @Test
     void testStartScope() {
-        Assertions.assertNull(TracingHandler.startScope(null, NoopSpan.INSTANCE));
-        Assertions.assertNull(TracingHandler.startScope(GlobalTracer.get(), null));
+        Assertions.assertNull(TracingHandler.startScope(NoopSpan.INSTANCE));
+        Assertions.assertNull(TracingHandler.startScope( null));
         final String methodName = "test";
         final String className = "testClass";
         Span span = TracingHandler.startSpan(new FunctionData(className, methodName), "test");
-        Scope scope = TracingHandler.startScope(tracer, span);
+        Scope scope = TracingHandler.startScope(span);
         Assertions.assertNotNull(scope);
         Assertions.assertTrue(scope instanceof BraveScope);
         span.finish();

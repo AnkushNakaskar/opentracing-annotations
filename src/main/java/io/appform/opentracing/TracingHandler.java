@@ -26,7 +26,7 @@ public class TracingHandler {
         }
     }
 
-    public static Span startSpan(final FunctionData functionData,
+    static Span startSpan(final FunctionData functionData,
                           final String parameterString) {
         try {
             Tracer tracer = TracerUtil.getTracer();
@@ -46,13 +46,12 @@ public class TracingHandler {
         }
     }
 
-    static Scope startScope(final Tracer tracer,
-                            final Span span) {
+    static Scope startScope(final Span span) {
         try {
-            if (tracer == null || span == null) {
+            if (span == null) {
                 return null;
             }
-            return tracer.activateSpan(span);
+            return TracerUtil.getTracer().activateSpan(span);
         } catch (Exception e) {
             log.error("Error while starting scope", e);
             return null;
