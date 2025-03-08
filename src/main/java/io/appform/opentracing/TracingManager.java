@@ -17,5 +17,4 @@ public class TracingManager {
     public static TracingOptions getTracingOptions() {
         return tracingOptions;
     }
-
 }

@@ -28,6 +28,7 @@ public class TracingOptions {
     public TracingOptions() {
         /* Nothing to do here */
     }
+
     public static class TracingOptionsBuilder {
         private boolean parameterCaptureEnabled;
         private boolean disableCacheOptimisation;
