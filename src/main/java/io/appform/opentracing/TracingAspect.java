@@ -73,7 +73,6 @@ public class TracingAspect {
         }
     }
 
-
     private FunctionData getFunctionData(final Signature callSignature,
                                          final MethodSignature methodSignature) {
         final TracingAnnotation tracingAnnotation = methodSignature.getMethod().getAnnotation(TracingAnnotation.class);
