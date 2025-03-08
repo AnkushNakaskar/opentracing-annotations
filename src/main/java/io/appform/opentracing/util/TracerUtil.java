@@ -23,18 +23,9 @@ public class TracerUtil {
     public static final String TRACE_ID = "trace_id";
     public static final String SPAN_ID = "span_id";
 
-    private static  Tracer tracer=null;
-
     public static Tracer getTracer() {
         GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
         return GlobalTracer.get();
-    }
-
-    public static Tracer getTracer(Tracing tracing) {
-        if(tracer ==null || !(tracer instanceof BraveTracer)){
-            tracer = BraveTracer.newBuilder(tracing).build();
-        }
-        return tracer;
     }
 
     private static void populateMDCTracing(String traceId,String spanId){
@@ -50,7 +41,7 @@ public class TracerUtil {
         return MDC.get(SPAN_ID);
     }
 
-    public static void destroyTracingForRequest() {
+    public static void destroyTracingForCurrentThread() {
         MDC.remove(TRACE_ID);
         MDC.remove(SPAN_ID);
     }
@@ -60,7 +51,7 @@ public class TracerUtil {
             populateMDCTracing(span.context().toTraceId(),span.context().toSpanId());
         }
     }
-    public static boolean isTraceIDPresentInQueueMessage(Map<String, Object> properties){
+    public static boolean isTraceIDPresentIn(Map<String, Object> properties){
 
         if(properties!=null && !properties.isEmpty()){
             if(properties.containsKey(TracerUtil.TRACE_ID) &&
@@ -71,8 +62,8 @@ public class TracerUtil {
         return false;
     }
 
-    public static void populateTracingFromQueue(Map<String, Object> properties){
-        if(isTraceIDPresentInQueueMessage(properties)){
+    public static void populateTracingFrom(Map<String, Object> properties){
+        if(isTraceIDPresentIn(properties)){
             populateMDCTracing(String.valueOf(properties.get(TracerUtil.TRACE_ID)),
                     String.valueOf(properties.get(TracerUtil.SPAN_ID)));
         }
