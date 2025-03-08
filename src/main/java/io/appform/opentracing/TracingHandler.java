@@ -25,15 +25,18 @@ public class TracingHandler {
         }
     }
 
-    static Span startSpan(final FunctionData functionData,
+    static Span startSpan(final Tracer tracer,
+                          final FunctionData functionData,
                           final String parameterString) {
         try {
-            Tracer tracer = TracerUtil.getTracer();
+            if (tracer == null) {
+                return null;
+            }
             SpanContext parentSpanContext = TracerUtil.buildSpanFromHeaders(tracer);
             Span span = tracer.buildSpan("method:" + functionData.getMethodName())
                     .asChildOf(parentSpanContext)
-                    .withTag(TracingConstants.CLASS_NAME_TAG, TracerUtil.stripToEmpty(functionData.getClassName()))
-                    .withTag(TracingConstants.METHOD_NAME_TAG, TracerUtil.stripToEmpty(functionData.getMethodName()))
+                    .withTag(TracingConstants.CLASS_NAME_TAG, functionData.getClassName())
+                    .withTag(TracingConstants.METHOD_NAME_TAG, functionData.getMethodName())
                     .start();
             if (!Strings.isNullOrEmpty(parameterString)) {
                 span.setTag(TracingConstants.PARAMETER_STRING_TAG, parameterString);
@@ -45,12 +48,13 @@ public class TracingHandler {
         }
     }
 
-    static Scope startScope(final Span span) {
+    static Scope startScope(final Tracer tracer,
+                            final Span span) {
         try {
-            if (span == null) {
+            if (tracer == null || span == null) {
                 return null;
             }
-            return TracerUtil.getTracer().activateSpan(span);
+            return tracer.activateSpan(span);
         } catch (Exception e) {
             log.error("Error while starting scope", e);
             return null;
@@ -98,5 +102,4 @@ public class TracingHandler {
                                      final Span span) {
         span.setTag(TracingConstants.METHOD_STATUS_TAG, status);
     }
-
 }

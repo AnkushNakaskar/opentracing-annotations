@@ -1,13 +1,13 @@
 package io.appform.opentracing.util;
 
 import brave.Tracing;
-import brave.opentracing.BraveSpanContext;
 import brave.opentracing.BraveTracer;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMapAdapter;
+import io.opentracing.util.GlobalTracer;
 import org.slf4j.MDC;
 
 import java.util.HashMap;
@@ -26,10 +26,8 @@ public class TracerUtil {
     private static  Tracer tracer=null;
 
     public static Tracer getTracer() {
-        if(tracer ==null || !(tracer instanceof BraveTracer)){
-            tracer = BraveTracer.newBuilder(Tracing.newBuilder().build()).build();
-        }
-        return tracer;
+        GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
+        return GlobalTracer.get();
     }
 
     public static Tracer getTracer(Tracing tracing) {
