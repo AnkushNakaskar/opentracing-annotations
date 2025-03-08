@@ -95,8 +95,4 @@ public class TracerUtil {
         }
         return false;
     }
-
-    public static String stripToEmpty(String input){
-        return input == null ? "" : input.trim();
-    }
 }
