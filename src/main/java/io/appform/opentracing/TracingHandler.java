@@ -25,7 +25,7 @@ public class TracingHandler {
         }
     }
 
-    static Span startSpan(final Tracer tracer,
+    public static Span startSpan(final Tracer tracer,
                           final FunctionData functionData,
                           final String parameterString) {
         try {
