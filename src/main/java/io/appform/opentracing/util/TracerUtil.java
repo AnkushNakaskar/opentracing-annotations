@@ -2,6 +2,8 @@ package io.appform.opentracing.util;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
+import io.appform.opentracing.FunctionData;
+import io.appform.opentracing.TracingHandler;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
@@ -42,6 +44,7 @@ public class TracerUtil {
     }
 
     public static void destroyTracingForCurrentThread() {
+        closeActiveSpan();
         MDC.remove(TRACE_ID);
         MDC.remove(SPAN_ID);
     }
@@ -51,8 +54,18 @@ public class TracerUtil {
             populateMDCTracing(span.context().toTraceId(),span.context().toSpanId());
         }
     }
-    public static boolean isTraceIDPresentIn(Map<String, Object> properties){
+    private static void closeActiveSpan(){
+        if(getTracer().activeSpan()!=null){
+            getTracer().activeSpan().finish();
+        }
+    }
+    public static void startNewSpanWithMDCTracing(FunctionData functionData){
+        Span span = TracingHandler.startSpan(TracerUtil.getTracer(), functionData, "");
+        getTracer().activateSpan(span);
+        TracerUtil.populateMDCTracing(span);
+    }
 
+    public static boolean isTraceIDPresentIn(Map<String, Object> properties){
         if(properties!=null && !properties.isEmpty()){
             if(properties.containsKey(TracerUtil.TRACE_ID) &&
                     properties.containsKey(TracerUtil.SPAN_ID)){
