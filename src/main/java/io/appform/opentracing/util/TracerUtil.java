@@ -2,6 +2,7 @@ package io.appform.opentracing.util;
 
 import brave.Tracing;
 import brave.opentracing.BraveTracer;
+import io.appform.opentracing.Constants;
 import io.appform.opentracing.FunctionData;
 import io.appform.opentracing.TracingHandler;
 import io.opentracing.Span;
@@ -16,14 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static io.appform.opentracing.Constants.SPAN_ID;
+import static io.appform.opentracing.Constants.TRACE_ID;
+
 /**
  * @author ankush.nakaskar
  */
 
 public class TracerUtil {
 
-    public static final String TRACE_ID = "trace_id";
-    public static final String SPAN_ID = "span_id";
 
     public static Tracer getTracer() {
         GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
@@ -67,8 +69,8 @@ public class TracerUtil {
 
     public static boolean isTraceIDPresentIn(Map<String, Object> properties){
         if(properties!=null && !properties.isEmpty()){
-            if(properties.containsKey(TracerUtil.TRACE_ID) &&
-                    properties.containsKey(TracerUtil.SPAN_ID)){
+            if(properties.containsKey(TRACE_ID) &&
+                    properties.containsKey(SPAN_ID)){
                 return true;
             }
         }
@@ -77,17 +79,17 @@ public class TracerUtil {
 
     public static void populateTracingFrom(Map<String, Object> properties){
         if(isTraceIDPresentIn(properties)){
-            populateMDCTracing(String.valueOf(properties.get(TracerUtil.TRACE_ID)),
-                    String.valueOf(properties.get(TracerUtil.SPAN_ID)));
+            populateMDCTracing(String.valueOf(properties.get(TRACE_ID)),
+                    String.valueOf(properties.get(SPAN_ID)));
         }
     }
 
     public static SpanContext buildSpanFromHeaders(Tracer tracer) {
         if(isTracePresent()){
             Map<String, String> headers = new HashMap<>();
-            headers.put("x-b3-traceid", TracerUtil.getMDCTraceId());
-            headers.put("x-b3-spanid", TracerUtil.getMDCSpanId());
-            headers.put("x-b3-parentspanid", TracerUtil.getMDCSpanId());
+            headers.put(Constants.X_B3_TRACE_ID.toLowerCase(), TracerUtil.getMDCTraceId());
+            headers.put(Constants.X_B3_SPAN_ID.toLowerCase(), TracerUtil.getMDCSpanId());
+            headers.put(Constants.X_B3_PARENT_SPAN_ID.toLowerCase(), TracerUtil.getMDCSpanId());
             return tracer.extract(Format.Builtin.TEXT_MAP, new TextMapAdapter(headers));
         }
         return null;
