@@ -34,6 +34,10 @@ public class TracerUtil {
         return GlobalTracer.get();
     }
 
+    public void registerBraveTracer(){
+        GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
+    }
+
     private static void populateMDCTracing(String traceId,String spanId){
         MDC.put(TRACE_ID,traceId);
         MDC.put(SPAN_ID,spanId);
