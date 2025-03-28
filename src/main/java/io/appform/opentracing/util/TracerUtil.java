@@ -34,7 +34,7 @@ public class TracerUtil {
         return GlobalTracer.get();
     }
 
-    public void registerBraveTracer(){
+    public static void registerBraveTracer(){
         GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
     }
 
