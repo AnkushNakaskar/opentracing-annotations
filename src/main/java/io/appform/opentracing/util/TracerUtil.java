@@ -104,7 +104,7 @@ public class TracerUtil {
     }
 
     public static boolean isTracePresent() {
-        if(TracerUtil.getMDCTraceId()!=null && !TracerUtil.getMDCTraceId().isEmpty() &&  TracerUtil.getMDCSpanId()!=null && !TracerUtil.getMDCSpanId().isEmpty()){
+        if(TracerUtil.isTracerEnabled() && TracerUtil.getMDCTraceId()!=null && !TracerUtil.getMDCTraceId().isEmpty() &&  TracerUtil.getMDCSpanId()!=null && !TracerUtil.getMDCSpanId().isEmpty()){
             return true;
         }
         return false;
