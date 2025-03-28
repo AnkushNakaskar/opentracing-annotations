@@ -27,8 +27,10 @@ import static io.appform.opentracing.Constants.TRACE_ID;
 public class TracerUtil {
 
 
+    public static boolean isTracerEnabled() {
+        return GlobalTracer.isRegistered();
+    }
     public static Tracer getTracer() {
-        GlobalTracer.registerIfAbsent(BraveTracer.newBuilder(Tracing.newBuilder().build()).build());
         return GlobalTracer.get();
     }
 
@@ -62,9 +64,11 @@ public class TracerUtil {
         }
     }
     public static void startNewSpanWithMDCTracing(FunctionData functionData){
-        Span span = TracingHandler.startSpan(TracerUtil.getTracer(), functionData, "");
-        getTracer().activateSpan(span);
-        TracerUtil.populateMDCTracing(span);
+        if(isTracerEnabled()){
+            Span span = TracingHandler.startSpan(TracerUtil.getTracer(), functionData, "");
+            getTracer().activateSpan(span);
+            TracerUtil.populateMDCTracing(span);
+        }
     }
 
     public static boolean isTraceIDPresentIn(Map<String, Object> properties){
